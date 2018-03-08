@@ -37,6 +37,10 @@ for(c=0; c<foodColumnCount; c++) {
     }
 }
 
+// Music
+var backgroundMusic = new sound("music/backgroundSong.mp3");
+
+
 // GAME CONTROLS
 
 // declare keys
@@ -95,6 +99,8 @@ function collisionDetection() {
                 if(x + pacmanRadius > foodElement.x + foodRadius && x - pacmanRadius < foodElement.x + foodRadius  &&
                     y + pacmanRadius > foodElement.y + foodRadius && y - pacmanRadius < foodElement.y + foodRadius) {
                     foodElement.status = 0;
+                    var eatingSound = new sound("music/eating.mp3");
+                    eatingSound.play();
                 }
             }
         }
@@ -128,6 +134,21 @@ function drawFood() {
     }
 }
 
+function sound(src) {
+    this.sound = document.createElement("audio");
+    this.sound.src = src;
+    this.sound.setAttribute("preload", "auto");
+    this.sound.setAttribute("controls", "none");
+    this.sound.style.display = "none";
+    document.body.appendChild(this.sound);
+    this.play = function(){
+        this.sound.play();
+    }
+    this.stop = function(){
+        this.sound.pause();
+    }
+}
+
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -153,4 +174,5 @@ function draw() {
     requestAnimationFrame(draw);
 }
 
+backgroundMusic.play();
 draw();
