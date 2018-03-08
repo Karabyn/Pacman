@@ -37,9 +37,10 @@ for(c=0; c<foodColumnCount; c++) {
     }
 }
 
+var score = 0;
+
 // Music
 var backgroundMusic = new sound("music/backgroundSong.mp3");
-
 
 // GAME CONTROLS
 
@@ -101,6 +102,7 @@ function collisionDetection() {
                     foodElement.status = 0;
                     var eatingSound = new sound("music/eating.mp3");
                     eatingSound.play();
+                    score += 10;
                 }
             }
         }
@@ -134,6 +136,12 @@ function drawFood() {
     }
 }
 
+function drawScore() {
+    ctx.font = "18px Arial";
+    ctx.fillStyle = "white";
+    ctx.fillText("Score: "+ score, 8, 20);
+}
+
 function sound(src) {
     this.sound = document.createElement("audio");
     this.sound.src = src;
@@ -154,6 +162,7 @@ function draw() {
 
     drawPacman();
     drawFood();
+    drawScore();
 
     collisionDetection();
 
