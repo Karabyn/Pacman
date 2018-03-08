@@ -1,5 +1,6 @@
 // create canvas element
 var canvas = document.createElement("canvas");
+// define size
 canvasWidth = 620;
 canvasHeight = 620;
 // set attributes for canvas
@@ -7,6 +8,7 @@ canvas.setAttribute("width", canvasWidth);
 canvas.setAttribute("height", canvasHeight);
 // add canvas element inside the body
 document.getElementsByTagName("body")[0].appendChild(canvas);
+
 // store the 2D rendering context
 var ctx = canvas.getContext("2d");
 
@@ -14,6 +16,28 @@ pacmanRadius = 20;
 // define pacman starting coordinates
 var x = canvasWidth/2;
 var y = canvasHeight - pacmanRadius;
+// numerical coordinate values for pacman movement on x and y axis
+var dx = 2;
+var dy = 2;
+
+// food definitions
+var foodRowCount = 14;
+var foodColumnCount = 14;
+var foodRadius = 4;
+var foodPadding = 35;
+var foodOffsetTop = 50;
+var foodOffsetLeft = 50;
+
+// generate food elements
+var foodElements = [];
+for(c=0; c<foodColumnCount; c++) {
+    foodElements[c] = [];
+    for(r=0; r<foodRowCount; r++) {
+        foodElements[c][r] = { x: 0, y: 0, status: 1 };
+    }
+}
+
+// GAME CONTROLS
 
 // declare keys
 var leftPressed = false;
@@ -27,9 +51,7 @@ var upKey = 38;
 var rightKey = 39;
 var downKey = 40;
 
-var dx = 2;
-var dy = 2;
-
+// add event listeners for arrow keys
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 
@@ -63,6 +85,21 @@ function keyUpHandler(e) {
     }
 }
 
+// detect collision between pacman and food elements
+function collisionDetection() {
+    for(c=0; c<foodColumnCount; c++) {
+        for(r=0; r<foodRowCount; r++) {
+            var foodElement = foodElements[c][r];
+            if(foodElement.status == 1) {
+                //check if the food element is fully inside the pacman circumference
+                if(x + pacmanRadius > foodElement.x + foodRadius && x - pacmanRadius < foodElement.x + foodRadius  &&
+                    y + pacmanRadius > foodElement.y + foodRadius && y - pacmanRadius < foodElement.y + foodRadius) {
+                    foodElement.status = 0;
+                }
+            }
+        }
+    }
+}
 
 function drawPacman() {
     ctx.beginPath();
@@ -73,9 +110,33 @@ function drawPacman() {
     ctx.closePath();
 }
 
+function drawFood() {
+    for(c=0; c<foodColumnCount; c++) {
+        for(r=0; r<foodRowCount; r++) {
+            if(foodElements[c][r].status == 1) {
+                var foodX = (c*(foodRadius+foodPadding))+foodOffsetLeft;
+                var foodY = (r*(foodRadius+foodPadding))+foodOffsetTop;
+                foodElements[c][r].x = foodX;
+                foodElements[c][r].y = foodY;
+                ctx.beginPath();
+                ctx.arc(foodX, foodY, foodRadius, 0, Math.PI * 2, false);
+                ctx.fillStyle = "orange";
+                ctx.fill();
+                ctx.closePath();
+            }
+        }
+    }
+}
+
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+    drawPacman();
+    drawFood();
+
+    collisionDetection();
+
+    // movement
     if(rightPressed) {
         x += dx;
     }
@@ -88,8 +149,6 @@ function draw() {
     else if(downPressed) {
         y += dy;
     }
-
-    drawPacman();
 
     requestAnimationFrame(draw);
 }
