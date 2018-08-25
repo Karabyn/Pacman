@@ -60,6 +60,7 @@ function keyUpHandler(e) {
     }
 }
 
+//TODO: refactor
 // detect collision between pacman and food elements
 function collisionDetection() {
     for(c = 0; c < food.columnCount; c++) {
@@ -84,7 +85,6 @@ function collisionDetection() {
 
 function draw() {
 
-
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     map.drawMap(ctx);
@@ -99,18 +99,19 @@ function draw() {
     collisionDetection();
 
     // movement
-    if(controls.rightPressed) {
-        pacman.moveRight();
+    if(controls.rightPressed && !pacman.currentDir.RIGHT) {
+        pacman.nextDir.RIGHT = true;
     }
-    else if(controls.leftPressed) {
-        pacman.moveLeft();
+    else if(controls.leftPressed && !pacman.currentDir.LEFT) {
+        pacman.nextDir.LEFT = true;
     }
-    else if(controls.upPressed) {
-        pacman.moveUp();
+    else if(controls.upPressed && !pacman.currentDir.UP) {
+        pacman.nextDir.UP = true;
     }
-    else if(controls.downPressed) {
-        pacman.moveDown();
+    else if(controls.downPressed && !pacman.currentDir.DOWN) {
+        pacman.nextDir.DOWN = true;
     }
+    pacman.move();
 
     requestAnimationFrame(draw);
 }

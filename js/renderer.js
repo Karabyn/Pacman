@@ -7,7 +7,7 @@ function drawPacman() {
     ctx.closePath();
 }
 
-
+//TODO: remove
 function drawFood() {
     for(let c = 0; c < food.columnCount; c++) {
         for(let r=0; r < food.rowCount; r++) {
