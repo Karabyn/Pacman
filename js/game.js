@@ -12,11 +12,9 @@ document.getElementsByTagName("body")[0].appendChild(canvas);
 // store the 2D rendering context
 const ctx = canvas.getContext("2d");
 
-
-
 const map = new GameMap();
 
-const pacman = new Pacman();
+const pacman = new Pacman(map);
 const food = new Food();
 
 
@@ -100,15 +98,19 @@ function draw() {
 
     // movement
     if(controls.rightPressed && !pacman.currentDir.RIGHT) {
+        pacman.nextDir = Pacman.initialDir();
         pacman.nextDir.RIGHT = true;
     }
     else if(controls.leftPressed && !pacman.currentDir.LEFT) {
+        pacman.nextDir = Pacman.initialDir();
         pacman.nextDir.LEFT = true;
     }
     else if(controls.upPressed && !pacman.currentDir.UP) {
+        pacman.nextDir = Pacman.initialDir();
         pacman.nextDir.UP = true;
     }
     else if(controls.downPressed && !pacman.currentDir.DOWN) {
+        pacman.nextDir = Pacman.initialDir();
         pacman.nextDir.DOWN = true;
     }
     pacman.move();

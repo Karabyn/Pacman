@@ -4,7 +4,7 @@ class GameMap {
         this.width = 500;
         this.height = 500;
 
-        this.margin = 10;
+        this.margin = 0;
         this.wallWidth = 5;
 
         this.tileSize = 20;
@@ -83,7 +83,7 @@ class GameMap {
                     let coordinates = this.getTileCoordinates(row, col);
                     ctx.beginPath();
                     const foodRadius = 2;
-                    ctx.fillStyle = "yellow";
+                    ctx.fillStyle = "orange";
                     ctx.arc(coordinates.x + (this.tileSize / 2),
                             coordinates.y + (this.tileSize / 2),
                             foodRadius, 0, Math.PI * 2);
@@ -93,8 +93,6 @@ class GameMap {
             }
         }
     }
-
-
 
     drawGameSpace(ctx) {
         const startingXCoor = this.margin;
@@ -108,6 +106,32 @@ class GameMap {
         }
     }
 
+    /**
+     * @returns {{x: number, y: number}}
+     * where x and y are coordinates of left topmost corner of the tile.
+     */
+    getTileCoordinates(row, col) {
+        let x = this.margin + col * this.tileSize;
+        let y = this.margin + row * this.tileSize;
+        return {x, y};
+    }
+
+    getTileRowColumn(x, y) {
+        if(x < this.margin || x >= this.width + this.margin || y < this.margin || y >= this.height + this.margin) {
+            return -1;
+        }
+
+        const row = Math.floor((y - this.margin) / this.tileSize);
+        const col = Math.floor((x - this.margin) / this.tileSize);
+        return {row, col};
+    }
+
+    canTileBeVisited(row, col) {
+        const tile = this.TILES[row][col];
+        return tile !== this.WALL && tile !== this.BLOCK;
+    }
+
+    //TODO: remove
     debugDraw(ctx) {
         const startingXCoor = this.margin;
         const startingYCoor = this.margin;
@@ -205,13 +229,5 @@ class GameMap {
             || (row === this.TILES.length - 1 && col === 0)
             || (row === this.TILES.length - 1 && col === this.TILES[0].length - 1)
     }
-
-    getTileCoordinates(row, col) {
-        let x = this.margin + col * this.tileSize;
-        let y = this.margin + row * this.tileSize;
-        return {x, y};
-    }
-
-
 
 }

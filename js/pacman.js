@@ -1,14 +1,20 @@
 class Pacman {
 
-    constructor() {
+    constructor(map) {
+
+        this.fullRadius = 10;
+
         this.radius = 9;
 
+        this.map = map;
+
         // pacman starting coordinates
-        this.x = 250 + this.radius;
-        this.y = 390 + this.radius + 1.5;
+        const startingTile = map.getTileCoordinates(19, 12);
+        this.x = startingTile.x + this.fullRadius; //250 + this.fullRadius;
+        this.y = startingTile.y + this.fullRadius; //390 + this.fullRadius; //+ 1.5;
         // values for pacman movement on x and y axis
-        this.dx = 1.5;
-        this.dy = 1.5;
+        this.dx = 2;
+        this.dy = 2;
 
         this.currentDir = Pacman.initialDir();
         this.nextDir = Pacman.initialDir();
@@ -17,35 +23,85 @@ class Pacman {
     }
 
     move() {
-        if (this.directionChanged()) {
+        if ((this.directionChanged() && this.canMove(this.nextDir)) ||
+            !this.canMove(this.currentDir) && this.canMove(this.nextDir)) {
             this.currentDir = this.nextDir;
+            this.nextDir = Pacman.initialDir();
         }
-        if (this.currentDir.RIGHT) this.moveRight();
-        else if (this.currentDir.LEFT) this.moveLeft();
-        else if (this.currentDir.UP) this.moveUp();
-        else if (this.currentDir.DOWN) this.moveDown();
+
+        if (this.currentDir.RIGHT && this.canMoveRight())        this.moveRight();
+        else if (this.currentDir.LEFT && this.canMoveLeft())     this.moveLeft();
+        else if (this.currentDir.UP && this.canMoveUp())         this.moveUp();
+        else if (this.currentDir.DOWN && this.canMoveDown())     this.moveDown();
+    }
+
+    canMoveRight() {
+        const tile = this.map.getTileRowColumn(this.x + this.fullRadius - 1 + this.dx, this.y);
+        if (this.map.canTileBeVisited(tile.row, tile.col)) {
+            const tileCoors = this.map.getTileCoordinates(tile.row, tile.col);
+            return (tileCoors.y + this.fullRadius) === this.y;
+        }
+        return false;
+    }
+
+    canMoveLeft() {
+        const tile = this.map.getTileRowColumn(this.x - this.fullRadius + 1 - this.dx, this.y);
+        if (this.map.canTileBeVisited(tile.row, tile.col)) {
+            const tileCoors = this.map.getTileCoordinates(tile.row, tile.col);
+            return (tileCoors.y + this.fullRadius) === this.y;
+        }
+        return false;
+    }
+
+    canMoveUp() {
+        const tile = this.map.getTileRowColumn(this.x, this.y - this.fullRadius + 1 - this.dy);
+        if (this.map.canTileBeVisited(tile.row, tile.col)) {
+            const tileCoors = this.map.getTileCoordinates(tile.row, tile.col);
+            return (tileCoors.x + this.fullRadius) === this.x;
+        }
+        return false;
+    }
+
+    canMoveDown() {
+        const tile = this.map.getTileRowColumn(this.x, this.y + this.fullRadius - 1 + this.dy);
+        if (this.map.canTileBeVisited(tile.row, tile.col)) {
+            const tileCoors = this.map.getTileCoordinates(tile.row, tile.col);
+            return (tileCoors.x + this.fullRadius) === this.x;
+        }
+        return false;
+    }
+
+    canMove(dir) {
+        if (dir.RIGHT) return this.canMoveRight();
+        else if (dir.LEFT) return this.canMoveLeft();
+        else if (dir.UP) return this.canMoveUp();
+        else if (dir.DOWN) return this.canMoveDown();
     }
 
     moveRight() {
-        this.resetDirs();
+        //this.resetDirs();
+        this.currentDir = Pacman.initialDir();
         this.currentDir.RIGHT = true;
         this.x += this.dx;
     }
 
     moveLeft() {
-        this.resetDirs();
+        //this.resetDirs();
+        this.currentDir = Pacman.initialDir();
         this.currentDir.LEFT = true;
         this.x -= this.dx;
     }
 
     moveUp() {
-        this.resetDirs();
+        //this.resetDirs();
+        this.currentDir = Pacman.initialDir();
         this.currentDir.UP = true;
         this.y -= this.dy;
     }
 
     moveDown() {
-        this.resetDirs();
+        //this.resetDirs();
+        this.currentDir = Pacman.initialDir();
         this.currentDir.DOWN = true;
         this.y += this.dy;
     }
