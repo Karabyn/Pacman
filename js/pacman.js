@@ -9,9 +9,9 @@ class Pacman {
         this.map = map;
 
         // pacman starting coordinates
-        const startingTile = map.getTileCoordinates(19, 12);
-        this.x = startingTile.x + this.fullRadius; //250 + this.fullRadius;
-        this.y = startingTile.y + this.fullRadius; //390 + this.fullRadius; //+ 1.5;
+        const startCoords = map.getTileCoordinates(map.startTile.row, map.startTile.col);
+        this.x = startCoords.x + this.fullRadius; //250 + this.fullRadius;
+        this.y = startCoords.y + this.fullRadius; //390 + this.fullRadius; //+ 1.5;
         // values for pacman movement on x and y axis
         this.dx = 2;
         this.dy = 2;
@@ -33,6 +33,9 @@ class Pacman {
         else if (this.currentDir.LEFT && this.canMoveLeft())     this.moveLeft();
         else if (this.currentDir.UP && this.canMoveUp())         this.moveUp();
         else if (this.currentDir.DOWN && this.canMoveDown())     this.moveDown();
+        //handle teleport
+        else if (this.currentDir.RIGHT && this.canTeleportRightToLeft())    this.teleportRightToLeft();
+        else if (this.currentDir.LEFT && this.canTeleportLeftToRight())     this.teleportLeftToRight();
     }
 
     canMoveRight() {
@@ -71,6 +74,16 @@ class Pacman {
         return false;
     }
 
+    canTeleportRightToLeft() {
+        const tile = this.map.getTileRowColumn(this.x + this.fullRadius - 1 + this.dx, this.y);
+        return tile.row === -1 && tile.col === -1;
+    }
+
+    canTeleportLeftToRight() {
+        const tile = this.map.getTileRowColumn(this.x - this.fullRadius + 1 - this.dx, this.y);
+        return tile.row === -1 && tile.col === -1;
+    }
+
     canMove(dir) {
         if (dir.RIGHT) return this.canMoveRight();
         else if (dir.LEFT) return this.canMoveLeft();
@@ -104,6 +117,20 @@ class Pacman {
         this.currentDir = Pacman.initialDir();
         this.currentDir.DOWN = true;
         this.y += this.dy;
+    }
+
+    teleportRightToLeft() {
+        this.currentDir = Pacman.initialDir();
+        this.currentDir.RIGHT = true;
+        const destinationTile = this.map.getTileCoordinates(map.leftTeleportTile.row, map.leftTeleportTile.col);
+        this.x = destinationTile.x - this.radius;
+    }
+
+    teleportLeftToRight() {
+        this.currentDir = Pacman.initialDir();
+        this.currentDir.LEFT = true;
+        const destinationTile = this.map.getTileCoordinates(map.rightTeleportTile.row, map.rightTeleportTile.col);
+        this.x = destinationTile.x + this.radius;
     }
 
     directionChanged() {

@@ -43,6 +43,10 @@ class GameMap {
             [1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1],
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     ];
+
+        this.startTile = {row: 19, col: 12};
+        this.leftTeleportTile = {row: 11, col: 0};
+        this.rightTeleportTile = {row: 11, col: 24}
     }
 
     drawMap(ctx) {
@@ -118,7 +122,7 @@ class GameMap {
 
     getTileRowColumn(x, y) {
         if(x < this.margin || x >= this.width + this.margin || y < this.margin || y >= this.height + this.margin) {
-            return -1;
+            return {row: -1, col: -1};
         }
 
         const row = Math.floor((y - this.margin) / this.tileSize);
@@ -127,8 +131,15 @@ class GameMap {
     }
 
     canTileBeVisited(row, col) {
-        const tile = this.TILES[row][col];
-        return tile !== this.WALL && tile !== this.BLOCK;
+        if (this.isTileWithinBounds(row, col)) {
+            const tile = this.TILES[row][col];
+            return tile !== this.WALL && tile !== this.BLOCK;
+        }
+        return false;
+    }
+
+    isTileWithinBounds(row, col) {
+        return row >= 0 && row < this.TILES.length && col >= 0 && col < this.TILES.length;
     }
 
     //TODO: remove
