@@ -123,14 +123,14 @@ class Pacman {
         this.currentDir = Pacman.initialDir();
         this.currentDir.RIGHT = true;
         const destinationTile = this.map.getTileCoordinates(map.leftTeleportTile.row, map.leftTeleportTile.col);
-        this.x = destinationTile.x - this.radius;
+        this.x = destinationTile.x - this.fullRadius;
     }
 
     teleportLeftToRight() {
         this.currentDir = Pacman.initialDir();
         this.currentDir.LEFT = true;
         const destinationTile = this.map.getTileCoordinates(map.rightTeleportTile.row, map.rightTeleportTile.col);
-        this.x = destinationTile.x + this.radius;
+        this.x = destinationTile.x + this.fullRadius;
     }
 
     directionChanged() {
