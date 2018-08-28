@@ -1,15 +1,8 @@
 class Food {
     constructor() {
-        // food definitions
-        this.rowCount = 14;
-        this.columnCount = 14;
         this.radius = 4;
-        this.padding = 35;
-        this.offsetTop = 50;
-        this.offsetLeft = 50;
         this.color = "orange";
 
-        this.elements = this.createFoodElements();
     }
 
     createFoodElements() {
@@ -22,4 +15,5 @@ class Food {
         }
         return elements;
     }
+
 }

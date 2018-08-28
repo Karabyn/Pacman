@@ -1,8 +1,8 @@
 // create canvas element
 const canvas = document.createElement("canvas");
 // define size
-const canvasWidth = 520;
-const canvasHeight = 520;
+const canvasWidth = 500;
+const canvasHeight = 530;
 // set attributes for canvas
 canvas.setAttribute("width", canvasWidth);
 canvas.setAttribute("height", canvasHeight);
@@ -15,12 +15,17 @@ const ctx = canvas.getContext("2d");
 const map = new GameMap();
 
 const pacman = new Pacman(map);
+const blinky = new Ghost(map);
+const pinky = new Ghost(map);
+const inky = new Ghost(map);
+const clyde = new Ghost(map);
+
 const food = new Food();
 
 
 let score = 0;
 // Music
-const backgroundMusic = new Sound("sound/backgroundSong.mp3");
+const audioPlayer = new AudioPlayer();
 // GAME CONTROLS
 const controls = new Controls();
 
@@ -58,45 +63,20 @@ function keyUpHandler(e) {
     }
 }
 
-//TODO: refactor
-// detect collision between pacman and food elements
-function collisionDetection() {
-    for(c = 0; c < food.columnCount; c++) {
-        for(r = 0; r < food.rowCount; r++) {
-            const foodElement = food.elements[c][r];
-            if(foodElement.status === 1) {
-                //check if the food element is fully inside the pacman circumference
-                if(pacman.x + pacman.radius > foodElement.x + food.radius &&
-                    pacman.x - pacman.radius < foodElement.x + food.radius  &&
-                    pacman.y + pacman.radius > foodElement.y + food.radius &&
-                    pacman.y - pacman.radius < foodElement.y + food.radius) {
-                    foodElement.status = 0;
-                    const eatingSound = new Sound("sound/eating.mp3");
-                    eatingSound.play();
-                    score += 10;
-                }
-            }
-        }
-    }
-}
-
-
 function draw() {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     map.drawMap(ctx);
-
-    drawPacman();
-    drawCoordinateGrid(ctx);
+    //drawCoordinateGrid(ctx);
 
     //drawFood();
     //drawMap();
-    //drawScore();
+    drawScore();
 
-    collisionDetection();
+    //collisionDetection();
 
-    // movement
+    // pacman next movement
     if(controls.rightPressed && !pacman.currentDir.RIGHT) {
         pacman.nextDir = Pacman.initialDir();
         pacman.nextDir.RIGHT = true;
@@ -113,11 +93,21 @@ function draw() {
         pacman.nextDir = Pacman.initialDir();
         pacman.nextDir.DOWN = true;
     }
+
     pacman.move();
+    blinky.move();
+    pinky.move();
+    inky.move();
+    clyde.move();
+
+    drawPacman();
+    drawBlinky();
+    drawPinky();
+    drawInky();
+    drawClyde();
 
     requestAnimationFrame(draw);
+
 }
 
-
-//backgroundMusic.play();
 draw();

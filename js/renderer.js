@@ -7,27 +7,40 @@ function drawPacman() {
     ctx.closePath();
 }
 
-//TODO: remove
-function drawFood() {
-    for(let c = 0; c < food.columnCount; c++) {
-        for(let r=0; r < food.rowCount; r++) {
-            if(food.elements[c][r].status === 1) {
-                var foodX = (c * (food.radius + food.padding)) + food.offsetLeft;
-                var foodY = (r * (food.radius + food.padding)) + food.offsetTop;
-                food.elements[c][r].x = foodX;
-                food.elements[c][r].y = foodY;
-                ctx.beginPath();
-                ctx.arc(foodX, foodY, food.radius, 0, Math.PI * 2, false);
-                ctx.fillStyle = food.color;
-                ctx.fill();
-                ctx.closePath();
-            }
-        }
-    }
+function drawBlinky() {
+    ctx.beginPath();
+    ctx.arc(blinky.x, blinky.y, blinky.radius, 0, Math.PI * 2, false);
+    ctx.fillStyle = "red";
+    ctx.fill();
+    ctx.closePath();
+}
+
+function drawPinky() {
+    ctx.beginPath();
+    ctx.arc(pinky.x, pinky.y, pinky.radius, 0, Math.PI * 2, false);
+    ctx.fillStyle = "pink";
+    ctx.fill();
+    ctx.closePath();
+}
+
+function drawInky() {
+    ctx.beginPath();
+    ctx.arc(inky.x, inky.y, inky.radius, 0, Math.PI * 2, false);
+    ctx.fillStyle = "cyan";
+    ctx.fill();
+    ctx.closePath();
+}
+
+function drawClyde() {
+    ctx.beginPath();
+    ctx.arc(clyde.x, clyde.y, clyde.radius, 0, Math.PI * 2, false);
+    ctx.fillStyle = "orange";
+    ctx.fill();
+    ctx.closePath();
 }
 
 function drawScore() {
-    ctx.font = "18px Arial";
+    ctx.font = "20px Arial";
     ctx.fillStyle = "white";
-    ctx.fillText("Score: " + score, 8, 20);
+    ctx.fillText("Score: " + score, 10, 525);
 }
