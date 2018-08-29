@@ -21,9 +21,10 @@ const controls = new Controls();
 
 const gameStates = {
     NEW_GAME  : 1,
-    RUNNING   : 2,
-    GAME_WON  : 3,
-    GAME_LOST : 4
+    STARTING  : 2,
+    RUNNING   : 3,
+    GAME_WON  : 4,
+    GAME_LOST : 5
 };
 
 let gameState = gameStates.NEW_GAME;
@@ -44,7 +45,7 @@ function createGameCanvas() {
 }
 
 function startNewGame() {
-    gameState = gameStates.NEW_GAME;
+    gameState = gameStates.STARTING;
     score = 0;
     map.reset();
     pacman.reset();
@@ -100,8 +101,27 @@ function activeGameLoop() {
     }
 }
 
-function mainGameLoop() {
-    if (!map.hasFoodElements) {
+async function mainGameLoop() {
+    if (gameState === gameStates.NEW_GAME) {
+        showNewGameScreen();
+    }
+    else if (gameState === gameStates.STARTING) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        map.drawMap(ctx);
+        drawPacman();
+        for(let ghost of ghosts) {
+            drawGhost(ghost);
+        }
+        showCountDown(3);
+        await asyncSleep(1000);
+
+        showCountDown(2);
+        await asyncSleep(1000);
+        showCountDown(1);
+        await asyncSleep(1000);
+        gameState = gameStates.RUNNING;
+    }
+    else if (!map.hasFoodElements) {
         sleep(2000);
         gameState = gameStates.GAME_WON;
         showWinScreen();

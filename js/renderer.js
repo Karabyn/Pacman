@@ -52,6 +52,23 @@ function showWinScreen() {
     ctx.fillText("Your score: " + score, map.width / 2, map.height / 2 + topMargin);
     ctx.fillText("Press 'R' to play again", map.width / 2, map.height / 2 + topMargin * 2);
     ctx.restore();
-    ctx.restore();
+}
 
+function showNewGameScreen() {
+    ctx.save();
+    ctx.textAlign="center";
+    ctx.fillStyle = "yellow";
+    ctx.font = "26px Helvetica";
+    ctx.fillText("Press 's' to start a game", map.width / 2, map.height / 2);
+    ctx.restore();
+}
+
+function showCountDown(n) {
+    ctx.save();
+    ctx.clearRect(0, canvasHeight - 30, canvasWidth, canvasHeight);
+    ctx.textAlign = "center";
+    ctx.fillStyle = "yellow";
+    ctx.font = "20px Helvetica";
+    ctx.fillText("Game starts in " + n, canvasWidth / 2, canvasHeight - 5);
+    ctx.restore();
 }

@@ -12,6 +12,7 @@ class Controls {
         this.rightKey = 39;
         this.downKey = 40;
         this.restartKey = 82;
+        this.startKey = 83;
     }
 }
 
@@ -31,6 +32,9 @@ function keyDownHandler(e) {
     else if((gameState === gameStates.GAME_WON || gameState === gameStates.GAME_LOST) &&
             e.keyCode === controls.restartKey) {
         startNewGame();
+    }
+    else if(gameState === gameStates.NEW_GAME && e.keyCode === controls.startKey) {
+        gameState = gameStates.STARTING;
     }
 }
 
