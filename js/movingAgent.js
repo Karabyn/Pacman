@@ -138,6 +138,11 @@ class MovingAgent {
             this.currentDir.LEFT === this.nextDir.LEFT;
     }
 
+    resetDirs() {
+        this.currentDir = MovingAgent.initialDir();
+        this.nextDir = MovingAgent.initialDir();
+    }
+
     static initialDir() {
         return {
             UP: false,

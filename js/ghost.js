@@ -1,11 +1,15 @@
 class Ghost extends MovingAgent{
 
-    constructor(map) {
+    constructor(map, name) {
         super(map);
 
-        const startCoords = map.getTileCoordinates(map.blinkyStartingTile.row, map.blinkyStartingTile.col);
-        this.x = startCoords.x + this.fullRadius;
-        this.y = startCoords.y + this.fullRadius;
+        this.name = name;
+        this.color = Ghost.getColor(name);
+        const startingTile = Ghost.getStartingTile(name);
+        const startCoords = map.getTileCenter(startingTile.row, startingTile.col);
+
+        this.x = startCoords.x;
+        this.y = startCoords.y;
 
     }
 
@@ -15,10 +19,6 @@ class Ghost extends MovingAgent{
             this.setNextRandomDir();
         }
         super.move();
-    }
-
-    static hasNoDir(dir) {
-        return !dir.UP && !dir.RIGHT && !dir.DOWN && !dir.LEFT;
     }
 
     setNextRandomDir() {
@@ -37,6 +37,37 @@ class Ghost extends MovingAgent{
             case 4:
                 this.nextDir.LEFT = true;
         }
+    }
+
+    goHome() {
+        const startingTile = Ghost.getStartingTile(this.name);
+        const startCoords = map.getTileCenter(startingTile.row, startingTile.col);
+
+        this.x = startCoords.x;
+        this.y = startCoords.y;
+        this.resetDirs();
+    }
+
+    static getColor(name) {
+        switch (name) {
+            case "blinky" : return "red";
+            case "pinky" : return "pink";
+            case "inky" : return "cyan";
+            case "clyde" : return "orange";
+        }
+    }
+
+    static getStartingTile(name) {
+        switch (name) {
+            case "blinky" : return  {row: 9, col: 12};
+            case "pinky" : return {row: 12, col: 10};
+            case "inky" : return {row: 12, col: 12};
+            case "clyde" : return {row: 12, col: 14}
+        }
+    }
+
+    static hasNoDir(dir) {
+        return !dir.UP && !dir.RIGHT && !dir.DOWN && !dir.LEFT;
     }
 
 }

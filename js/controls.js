@@ -12,6 +12,34 @@ class Controls {
         this.rightKey = 39;
         this.downKey = 40;
     }
+}
 
+function keyDownHandler(e) {
+    if(e.keyCode === controls.leftKey) {
+        controls.leftPressed = true;
+    }
+    else if(e.keyCode === controls.upKey) {
+        controls.upPressed = true;
+    }
+    else if(e.keyCode === controls.rightKey) {
+        controls.rightPressed = true;
+    }
+    else if(e.keyCode === controls.downKey) {
+        controls.downPressed = true;
+    }
+}
 
+function keyUpHandler(e) {
+    if(e.keyCode === controls.leftKey) {
+        controls.leftPressed = false;
+    }
+    else if(e.keyCode === controls.upKey) {
+        controls.upPressed = false;
+    }
+    else if(e.keyCode === controls.rightKey) {
+        controls.rightPressed = false;
+    }
+    else if(e.keyCode === controls.downKey) {
+        controls.downPressed = false;
+    }
 }

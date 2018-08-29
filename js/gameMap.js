@@ -43,11 +43,8 @@ class GameMap {
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     ];
 
-        this.startTile = {row: 19, col: 12};
         this.leftTeleportTile = {row: 11, col: 0};
         this.rightTeleportTile = {row: 11, col: 24};
-
-        this.blinkyStartingTile = {row: 14, col: 14};
     }
 
     drawMap(ctx) {

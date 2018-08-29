@@ -4,9 +4,11 @@ class Pacman extends MovingAgent {
         super(map);
 
         // pacman starting coordinates
-        const startCoords = map.getTileCoordinates(map.startTile.row, map.startTile.col);
-        this.x = startCoords.x + this.fullRadius;
-        this.y = startCoords.y + this.fullRadius;
+        const startCoords = this.getStartingCoodinates();
+        this.x = startCoords.x;
+        this.y = startCoords.y;
+
+        this.lives = 3;
 
         this.color = "yellow";
     }
@@ -15,12 +17,28 @@ class Pacman extends MovingAgent {
         super.move();
 
         // eat food
-        const currentTile = map.getTileRowColumn(this.x, this.y);
-        if (map.isTileWithinBounds(currentTile.row, currentTile.col) &&
-            map.TILES[currentTile.row][currentTile.col] === map.FOOD) {
+        this.eatFood();
+    }
+
+    eatFood() {
+        const currentTile = this.map.getTileRowColumn(this.x, this.y);
+        if (this.map.isTileWithinBounds(currentTile.row, currentTile.col) &&
+            this.map.TILES[currentTile.row][currentTile.col] === map.FOOD) {
             score += 10;
-            map.TILES[currentTile.row][currentTile.col] = map.EMPTY;
+            this.map.TILES[currentTile.row][currentTile.col] = map.EMPTY;
         }
+    }
+
+    die() {
+        this.lives -= 1;
+        const startCoords = this.getStartingCoodinates();
+        this.x = startCoords.x;
+        this.y = startCoords.y;
+        this.resetDirs();
+    }
+
+    getStartingCoodinates() {
+        return this.map.getTileCenter(19, 12);
     }
 
 }
