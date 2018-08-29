@@ -11,6 +11,7 @@ class Controls {
         this.upKey = 38;
         this.rightKey = 39;
         this.downKey = 40;
+        this.restartKey = 82;
     }
 }
 
@@ -26,6 +27,10 @@ function keyDownHandler(e) {
     }
     else if(e.keyCode === controls.downKey) {
         controls.downPressed = true;
+    }
+    else if((gameState === gameStates.GAME_WON || gameState === gameStates.GAME_LOST) &&
+            e.keyCode === controls.restartKey) {
+        startNewGame();
     }
 }
 

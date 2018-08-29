@@ -8,7 +8,7 @@ class Pacman extends MovingAgent {
         this.x = startCoords.x;
         this.y = startCoords.y;
 
-        this.lives = 3;
+        this.lives = 2;
 
         this.color = "yellow";
     }
@@ -31,6 +31,16 @@ class Pacman extends MovingAgent {
 
     die() {
         this.lives -= 1;
+        this.resetPosition();
+
+    }
+
+    reset() {
+        this.lives = 3;
+        this.resetPosition();
+    }
+
+    resetPosition() {
         const startCoords = this.getStartingCoodinates();
         this.x = startCoords.x;
         this.y = startCoords.y;

@@ -1,4 +1,4 @@
-class Ghost extends MovingAgent{
+class Ghost extends MovingAgent {
 
     constructor(map, name) {
         super(map);
@@ -39,7 +39,7 @@ class Ghost extends MovingAgent{
         }
     }
 
-    goHome() {
+    reset() {
         const startingTile = Ghost.getStartingTile(this.name);
         const startCoords = map.getTileCenter(startingTile.row, startingTile.col);
 

@@ -25,11 +25,11 @@ function drawCoordinateGrid(ctx) {
     ctx.restore();
 }
 
-function sleep(ms) {
+function asyncSleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function busySleep(ms) {
+function sleep(ms) {
     const start = new Date().getTime();
     for (let i = 0; i < 1e7; i++) {
         if ((new Date().getTime() - start) > ms){

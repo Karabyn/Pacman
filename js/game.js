@@ -1,41 +1,59 @@
-// create canvas element
-const canvas = document.createElement("canvas");
-// define size
 const canvasWidth = 500;
 const canvasHeight = 530;
-// set attributes for canvas
-canvas.setAttribute("width", canvasWidth);
-canvas.setAttribute("height", canvasHeight);
-// add canvas element inside the body
-document.getElementsByTagName("body")[0].appendChild(canvas);
-
+const canvas = createGameCanvas();
 // store the 2D rendering context
 const ctx = canvas.getContext("2d");
-
+// Game map
 const map = new GameMap();
-
+// Moving agents
 const pacman = new Pacman(map);
 const blinky = new Ghost(map, "blinky");
 const pinky = new Ghost(map, "pinky");
 const inky = new Ghost(map, "inky");
 const clyde = new Ghost(map, "clyde");
 const ghosts = [blinky, pinky, inky, clyde];
-
-const food = new Food();
-
+// Game score
 let score = 0;
 // Music
 const audioPlayer = new AudioPlayer();
-
-// GAME CONTROLS
+// Game controls
 const controls = new Controls();
+
+const gameStates = {
+    NEW_GAME  : 1,
+    RUNNING   : 2,
+    GAME_WON  : 3,
+    GAME_LOST : 4
+};
+
+let gameState = gameStates.NEW_GAME;
 
 // add event listeners for arrow keys
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 
+function createGameCanvas() {
+    // create canvas element
+    const canvas = document.createElement("canvas");
+    // set attributes for canvas
+    canvas.setAttribute("width", canvasWidth);
+    canvas.setAttribute("height", canvasHeight);
+    // add canvas element inside the body
+    document.getElementsByTagName("body")[0].appendChild(canvas);
+    return canvas;
+}
 
-async function draw() {
+function startNewGame() {
+    gameState = gameStates.NEW_GAME;
+    score = 0;
+    map.reset();
+    pacman.reset();
+    for (let ghost of ghosts) {
+        ghost.reset();
+    }
+}
+
+function activeGameLoop() {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -43,11 +61,6 @@ async function draw() {
 
     drawScore();
     drawLives();
-
-    drawPacman();
-    for(let ghost of ghosts) {
-        drawGhost(ghost);
-    }
 
     // pacman next movement
     if (controls.rightPressed && !pacman.currentDir.RIGHT) {
@@ -72,17 +85,35 @@ async function draw() {
         ghost.move();
     }
 
-    if (Collider.pacmanGhostCollision(pacman, ghosts)) {
-        audioPlayer.dieSound.play();
-        await sleep(2000);
-        pacman.die();
-        for(let ghost of ghosts) {
-            ghost.goHome();
-        }
+    drawPacman();
+    for(let ghost of ghosts) {
+        drawGhost(ghost);
     }
 
-    requestAnimationFrame(draw);
-
+    if (Collider.pacmanGhostCollision(pacman, ghosts)) {
+        audioPlayer.dieSound.play();
+        sleep(2000);
+        pacman.die();
+        for(let ghost of ghosts) {
+            ghost.reset();
+        }
+    }
 }
 
-draw();
+function mainGameLoop() {
+    if (!map.hasFoodElements) {
+        sleep(2000);
+        gameState = gameStates.GAME_WON;
+        showWinScreen();
+    }
+    else if (pacman.lives < 0) {
+        gameState = gameStates.GAME_LOST;
+        showGameOverScreen();
+    } else {
+        gameState = gameStates.RUNNING;
+        activeGameLoop();
+    }
+    requestAnimationFrame(mainGameLoop);
+}
+
+mainGameLoop();

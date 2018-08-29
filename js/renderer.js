@@ -25,3 +25,33 @@ function drawLives() {
     ctx.fillStyle = "white";
     ctx.fillText("Lives: " + pacman.lives, 125, 525);
 }
+
+function showGameOverScreen() {
+    ctx.save();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.textAlign="center";
+    ctx.fillStyle = "yellow";
+    ctx.font = "26px Helvetica";
+    ctx.fillText("GAME OVER!", map.width / 2, map.height / 2);
+    ctx.font = "16px Helvetica";
+    const topMargin = 25;
+    ctx.fillText("Your score: " + score, map.width / 2, map.height / 2 + topMargin);
+    ctx.fillText("Press 'R' to play again", map.width / 2, map.height / 2 + topMargin * 2);
+    ctx.restore();
+}
+
+function showWinScreen() {
+    ctx.save();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.textAlign="center";
+    ctx.fillStyle = "yellow";
+    ctx.font = "26px Helvetica";
+    ctx.fillText("YOU WIN!", map.width / 2, map.height / 2);
+    ctx.font = "16px Helvetica";
+    const topMargin = 25;
+    ctx.fillText("Your score: " + score, map.width / 2, map.height / 2 + topMargin);
+    ctx.fillText("Press 'R' to play again", map.width / 2, map.height / 2 + topMargin * 2);
+    ctx.restore();
+    ctx.restore();
+
+}
