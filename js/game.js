@@ -30,10 +30,6 @@ const gameStates = {
 
 let gameState = gameStates.NEW_GAME;
 
-// add event listeners for arrow keys
-document.addEventListener("keydown", keyDownHandler, false);
-document.addEventListener("keyup", keyUpHandler, false);
-
 function createGameCanvas() {
     // create canvas element
     const canvas = document.createElement("canvas");

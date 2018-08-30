@@ -14,48 +14,52 @@ class Controls {
         this.pauseKey = 80;         // p
         this.restartResumeKey = 82; // r
         this.startKey = 83;         // s
-    }
-}
 
-function keyDownHandler(e) {
-    if(e.keyCode === controls.leftKey) {
-        controls.leftPressed = true;
+        document.addEventListener("keydown", this.keyDownHandler.bind(this), false);
+        document.addEventListener("keyup", this.keyUpHandler.bind(this), false);
     }
-    else if(e.keyCode === controls.upKey) {
-        controls.upPressed = true;
-    }
-    else if(e.keyCode === controls.rightKey) {
-        controls.rightPressed = true;
-    }
-    else if(e.keyCode === controls.downKey) {
-        controls.downPressed = true;
-    }
-    else if((gameState === gameStates.GAME_WON || gameState === gameStates.GAME_LOST) &&
-            e.keyCode === controls.restartResumeKey) {
-        startNewGame();
-    }
-    else if(gameState === gameStates.NEW_GAME && e.keyCode === controls.startKey) {
-        gameState = gameStates.STARTING;
-    }
-    else if(gameState === gameStates.RUNNING && e.keyCode === controls.pauseKey) {
-        gameState = gameStates.PAUSED;
-    }
-    else if(gameState === gameStates.PAUSED && e.keyCode === controls.restartResumeKey) {
-        gameState = gameStates.RUNNING;
-    }
-}
 
-function keyUpHandler(e) {
-    if(e.keyCode === controls.leftKey) {
-        controls.leftPressed = false;
+    keyDownHandler(e) {
+        if(e.keyCode === this.leftKey) {
+            this.leftPressed = true;
+        }
+        else if(e.keyCode === this.upKey) {
+            this.upPressed = true;
+        }
+        else if(e.keyCode === this.rightKey) {
+            this.rightPressed = true;
+        }
+        else if(e.keyCode === this.downKey) {
+            this.downPressed = true;
+        }
+        else if((gameState === gameStates.GAME_WON || gameState === gameStates.GAME_LOST) &&
+            e.keyCode === this.restartResumeKey) {
+            startNewGame();
+        }
+        else if(gameState === gameStates.NEW_GAME && e.keyCode === this.startKey) {
+            gameState = gameStates.STARTING;
+        }
+        else if(gameState === gameStates.RUNNING && e.keyCode === this.pauseKey) {
+            gameState = gameStates.PAUSED;
+        }
+        else if(gameState === gameStates.PAUSED && e.keyCode === this.restartResumeKey) {
+            gameState = gameStates.RUNNING;
+        }
     }
-    else if(e.keyCode === controls.upKey) {
-        controls.upPressed = false;
+
+    keyUpHandler(e) {
+        if(e.keyCode === this.leftKey) {
+            this.leftPressed = false;
+        }
+        else if(e.keyCode === this.upKey) {
+            this.upPressed = false;
+        }
+        else if(e.keyCode === this.rightKey) {
+            this.rightPressed = false;
+        }
+        else if(e.keyCode === this.downKey) {
+            this.downPressed = false;
+        }
     }
-    else if(e.keyCode === controls.rightKey) {
-        controls.rightPressed = false;
-    }
-    else if(e.keyCode === controls.downKey) {
-        controls.downPressed = false;
-    }
+
 }
