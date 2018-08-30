@@ -93,45 +93,46 @@ function activeGameLoop() {
 
     if (Collider.pacmanGhostCollision(pacman, ghosts)) {
         audioPlayer.dieSound.play();
-        sleep(2000);
         pacman.die();
         for(let ghost of ghosts) {
             ghost.reset();
+        }
+        if (pacman.lives < 0) {
+            gameState = gameStates.GAME_LOST;
         }
     }
 }
 
 async function mainGameLoop() {
-    if (gameState === gameStates.NEW_GAME) {
-        showNewGameScreen();
-    }
-    else if (gameState === gameStates.STARTING) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        map.drawMap(ctx);
-        drawPacman();
-        for(let ghost of ghosts) {
-            drawGhost(ghost);
-        }
-        showCountDown(3);
-        await asyncSleep(1000);
+    switch (gameState) {
+        case gameStates.NEW_GAME:
+            showNewGameScreen();
+            break;
+        case gameStates.STARTING:
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            map.drawMap(ctx);
+            drawPacman();
+            for(let ghost of ghosts) {
+                drawGhost(ghost);
+            }
+            showCountDown(3);
+            await asyncSleep(1000);
+            showCountDown(2);
+            await asyncSleep(1000);
+            showCountDown(1);
+            await asyncSleep(1000);
+            gameState = gameStates.RUNNING;
+            break;
+        case gameStates.RUNNING:
+            activeGameLoop();
+            break;
+        case gameStates.GAME_WON:
+            await asyncSleep(2000);
+            showWinScreen();
+            break;
+        case gameStates.GAME_LOST:
+            showGameOverScreen();
 
-        showCountDown(2);
-        await asyncSleep(1000);
-        showCountDown(1);
-        await asyncSleep(1000);
-        gameState = gameStates.RUNNING;
-    }
-    else if (!map.hasFoodElements) {
-        sleep(2000);
-        gameState = gameStates.GAME_WON;
-        showWinScreen();
-    }
-    else if (pacman.lives < 0) {
-        gameState = gameStates.GAME_LOST;
-        showGameOverScreen();
-    } else {
-        gameState = gameStates.RUNNING;
-        activeGameLoop();
     }
     requestAnimationFrame(mainGameLoop);
 }

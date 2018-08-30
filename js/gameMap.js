@@ -27,6 +27,9 @@ class GameMap {
         this.drawWalls(ctx);
         this.drawBlocks(ctx);
         this.drawFood(ctx);
+        if (!this.hasFoodElements) {
+            gameState = gameStates.GAME_WON;
+        }
     }
 
     drawWalls(ctx) {

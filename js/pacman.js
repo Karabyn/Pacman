@@ -29,10 +29,10 @@ class Pacman extends MovingAgent {
         }
     }
 
-    die() {
+    async die() {
         this.lives -= 1;
+        await sleep(2000);
         this.resetPosition();
-
     }
 
     reset() {
