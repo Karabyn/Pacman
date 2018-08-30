@@ -72,3 +72,13 @@ function showCountDown(n) {
     ctx.fillText("Game starts in " + n, canvasWidth / 2, canvasHeight - 5);
     ctx.restore();
 }
+
+function showPausedMessage() {
+    ctx.save();
+    ctx.clearRect(0, canvasHeight - 30, canvasWidth, canvasHeight);
+    ctx.textAlign = "center";
+    ctx.fillStyle = "yellow";
+    ctx.font = "20px Helvetica";
+    ctx.fillText("Press 'r' to resume", canvasWidth / 2, canvasHeight - 5);
+    ctx.restore();
+}

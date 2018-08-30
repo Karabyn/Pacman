@@ -11,8 +11,9 @@ class Controls {
         this.upKey = 38;
         this.rightKey = 39;
         this.downKey = 40;
-        this.restartKey = 82;
-        this.startKey = 83;
+        this.pauseKey = 80;         // p
+        this.restartResumeKey = 82; // r
+        this.startKey = 83;         // s
     }
 }
 
@@ -30,11 +31,17 @@ function keyDownHandler(e) {
         controls.downPressed = true;
     }
     else if((gameState === gameStates.GAME_WON || gameState === gameStates.GAME_LOST) &&
-            e.keyCode === controls.restartKey) {
+            e.keyCode === controls.restartResumeKey) {
         startNewGame();
     }
     else if(gameState === gameStates.NEW_GAME && e.keyCode === controls.startKey) {
         gameState = gameStates.STARTING;
+    }
+    else if(gameState === gameStates.RUNNING && e.keyCode === controls.pauseKey) {
+        gameState = gameStates.PAUSED;
+    }
+    else if(gameState === gameStates.PAUSED && e.keyCode === controls.restartResumeKey) {
+        gameState = gameStates.RUNNING;
     }
 }
 

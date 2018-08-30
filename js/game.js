@@ -23,8 +23,9 @@ const gameStates = {
     NEW_GAME  : 1,
     STARTING  : 2,
     RUNNING   : 3,
-    GAME_WON  : 4,
-    GAME_LOST : 5
+    PAUSED    : 4,
+    GAME_WON  : 5,
+    GAME_LOST : 6
 };
 
 let gameState = gameStates.NEW_GAME;
@@ -125,6 +126,9 @@ async function mainGameLoop() {
             break;
         case gameStates.RUNNING:
             activeGameLoop();
+            break;
+        case gameStates.PAUSED:
+            showPausedMessage();
             break;
         case gameStates.GAME_WON:
             await asyncSleep(2000);
