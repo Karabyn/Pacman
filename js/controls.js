@@ -1,4 +1,5 @@
 class Controls {
+
     constructor() {
         // declare keys
         this.leftPressed = false;

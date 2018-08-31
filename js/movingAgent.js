@@ -4,7 +4,7 @@ class MovingAgent {
         this.map = map;
 
         this.fullRadius = 10;
-        this.radius = 9;
+        this.radius = 11;
 
         // values for movement on x and y axis
         this.dx = 2;

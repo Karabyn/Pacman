@@ -11,18 +11,33 @@ class Ghost extends MovingAgent {
         this.x = startCoords.x;
         this.y = startCoords.y;
 
+        this.alive = true;
+        this.deadTick = 0;
     }
 
     move() {
-        this.nextDir = MovingAgent.initialDir();
-        if (Ghost.hasNoDir(this.currentDir) || !this.canMove(this.currentDir) ) {
-            this.setNextRandomDir();
+        if (this.alive) {
+            this.nextDir = MovingAgent.initialDir();
+            if (Ghost.hasNoDir(this.currentDir) || !this.canMove(this.currentDir) ) {
+                this.setNextRandomDir();
+            }
+            super.move();
         }
-        super.move();
+        else if (!this.alive && this.deadPeriodElapsed()) {
+            this.alive = true;
+            this.deadTick = 0;
+            audioPlayer.ghostDeadSound.pause();
+        }
+        else if (!this.alive && !this.deadPeriodElapsed()) {
+            if (!AudioPlayer.isPlaying(audioPlayer.ghostDeadSound)) {
+                audioPlayer.ghostDeadSound.play();
+            }
+            this.deadTick++;
+        }
     }
 
     setNextRandomDir() {
-        this.nextDir = Ghost.initialDir();
+        this.nextDir = MovingAgent.initialDir();
         const nextDir = Math.floor((Math.random() * 4) + 1);
         switch (nextDir) {
             case 1:
@@ -39,6 +54,15 @@ class Ghost extends MovingAgent {
         }
     }
 
+    die() {
+        this.alive = false;
+        this.reset();
+    }
+
+    deadPeriodElapsed() {
+        return this.deadTick === fps * 3;
+    }
+
     reset() {
         const startingTile = Ghost.getStartingTile(this.name);
         const startCoords = map.getTileCenter(startingTile.row, startingTile.col);
@@ -51,18 +75,18 @@ class Ghost extends MovingAgent {
     static getColor(name) {
         switch (name) {
             case "blinky" : return "red";
-            case "pinky" : return "pink";
-            case "inky" : return "cyan";
-            case "clyde" : return "orange";
+            case "pinky"  : return "pink";
+            case "inky"   : return "cyan";
+            case "clyde"  : return "orange";
         }
     }
 
     static getStartingTile(name) {
         switch (name) {
-            case "blinky" : return  {row: 9, col: 12};
-            case "pinky" : return {row: 12, col: 10};
-            case "inky" : return {row: 12, col: 12};
-            case "clyde" : return {row: 12, col: 14}
+            case "blinky" : return {row: 9, col: 12};
+            case "pinky"  : return {row: 12, col: 10};
+            case "inky"   : return {row: 12, col: 12};
+            case "clyde"  : return {row: 12, col: 14};
         }
     }
 

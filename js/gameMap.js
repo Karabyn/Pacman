@@ -24,56 +24,52 @@ class GameMap {
     }
 
     drawMap(ctx) {
-        this.drawWalls(ctx);
-        this.drawBlocks(ctx);
-        this.drawFood(ctx);
+        this.hasFoodElements = false;
+        for (let col = 0; col < this.TILES.length; col++) {
+            for (let row = 0; row < this.TILES[0].length; row++) {
+                const tileType = this.TILES[row][col];
+                if (tileType === this.WALL || tileType === this.BLOCK) {
+                    this.drawObstacle(ctx, row, col);
+                }
+                else if (tileType === this.FOOD) {
+                    this.hasFoodElements = true;
+                    this.drawFoodElement(ctx, row, col);
+                }
+                else if (tileType === this.COOKIE) {
+                    this.hasFoodElements = true;
+                    this.drawCookie(ctx, row, col);
+                }
+            }
+        }
         if (!this.hasFoodElements) {
             gameState = gameStates.GAME_WON;
         }
     }
 
-    drawWalls(ctx) {
+    drawObstacle(ctx, row, col) {
         ctx.fillStyle = "blue";
-        for (let col = 0; col < this.TILES.length; col++) {
-            for (let row = 0; row < this.TILES[0].length; row++) {
-                if(this.TILES[row][col] === 1) {
-                    let coordinates = this.getTileCoordinates(row, col);
-                    ctx.fillRect(coordinates.x, coordinates.y, this.tileSize, this.tileSize);
-                }
-            }
-        }
+        const coordinates = this.getTileCoordinates(row, col);
+        const offset = 2;
+        ctx.fillRect(coordinates.x + offset, coordinates.y + offset,
+                    this.tileSize - offset * 2, this.tileSize - offset * 2);
     }
 
-    drawBlocks(ctx) {
-        ctx.fillStyle = 'blue';
-        for (let col = 0; col < this.TILES.length; col++) {
-            for (let row = 0; row < this.TILES[0].length; row++) {
-                if(this.TILES[row][col] === 2) {
-                    let coordinates = this.getTileCoordinates(row, col);
-                    ctx.fillRect(coordinates.x, coordinates.y, this.tileSize, this.tileSize);
-                }
-            }
-        }
-    }
-
-    drawFood(ctx) {
+    drawFoodElement(ctx, row, col) {
         ctx.fillStyle = "orange";
-        this.hasFoodElements = false;
-        for (let col = 0; col < this.TILES.length; col++) {
-            for (let row = 0; row < this.TILES[0].length; row++) {
-                if (this.TILES[row][col] === 3) {
-                    this.hasFoodElements = true;
-                    let coordinates = this.getTileCoordinates(row, col);
-                    ctx.beginPath();
-                    const foodRadius = 2;
-                    ctx.arc(coordinates.x + (this.tileSize / 2),
-                            coordinates.y + (this.tileSize / 2),
-                            foodRadius, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.closePath();
-                }
-            }
-        }
+        let coordinates = this.getTileCenter(row, col);
+        ctx.fillRect(coordinates.x - 1, coordinates.y - 1, 2, 2);
+    }
+
+    drawCookie(ctx, row, col) {
+        ctx.fillStyle = "orange";
+        let coordinates = this.getTileCoordinates(row, col);
+        ctx.beginPath();
+        const radius = 4;
+        ctx.arc(coordinates.x + (this.tileSize / 2),
+            coordinates.y + (this.tileSize / 2),
+            radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.closePath();
     }
 
     drawGameSpace(ctx) {
@@ -136,7 +132,7 @@ class GameMap {
                 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
                 [1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1],
                 [1, 3, 2, 2, 2, 3, 2, 2, 2, 2, 2, 3, 1, 3, 2, 2, 2, 2, 2, 3, 2, 2, 2, 3, 1],
-                [1, 3, 2, 2, 2, 3, 2, 2, 2, 2, 2, 3, 1, 3, 2, 2, 2, 2, 2, 3, 2, 2, 2, 3, 1],
+                [1, 4, 2, 2, 2, 3, 2, 2, 2, 2, 2, 3, 1, 3, 2, 2, 2, 2, 2, 3, 2, 2, 2, 4, 1],
                 [1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1],
                 [1, 3, 2, 2, 2, 3, 2, 3, 2, 2, 2, 3, 2, 3, 2, 2, 2, 3, 2, 3, 2, 2, 2, 3, 1],
                 [1, 3, 3, 3, 3, 3, 2, 3, 2, 2, 2, 3, 2, 3, 2, 2, 2, 3, 2, 3, 3, 3, 3, 3, 1],
@@ -151,7 +147,7 @@ class GameMap {
                 [1, 1, 1, 1, 1, 3, 2, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 2, 3, 1, 1, 1, 1, 1],
                 [1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1],
                 [1, 3, 2, 2, 2, 3, 2, 2, 2, 2, 2, 3, 2, 3, 2, 2, 2, 2, 2, 3, 2, 2, 2, 3, 1],
-                [1, 3, 3, 3, 2, 3, 2, 2, 2, 2, 2, 3, 2, 3, 2, 2, 2, 2, 2, 3, 2, 3, 3, 3, 1],
+                [1, 4, 3, 3, 2, 3, 2, 2, 2, 2, 2, 3, 2, 3, 2, 2, 2, 2, 2, 3, 2, 3, 3, 4, 1],
                 [1, 1, 1, 3, 2, 3, 3, 3, 3, 3, 3, 3, 0, 3, 3, 3, 3, 3, 3, 3, 2, 3, 1, 1, 1],
                 [1, 1, 1, 3, 2, 3, 2, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 2, 3, 2, 3, 1, 1, 1],
                 [1, 3, 3, 3, 3, 3, 2, 3, 3, 3, 3, 3, 2, 3, 3, 3, 3, 3, 2, 3, 3, 3, 3, 3, 1],

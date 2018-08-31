@@ -6,10 +6,10 @@ function drawPacman() {
     ctx.closePath();
 }
 
-function drawGhost(ghost) {
+function drawGhost(ghost, chasingMode) {
     ctx.beginPath();
     ctx.arc(ghost.x, ghost.y, ghost.radius, 0, Math.PI * 2, false);
-    ctx.fillStyle = ghost.color;
+    ctx.fillStyle = chasingMode ? "LightBlue" : ghost.color;
     ctx.fill();
     ctx.closePath();
 }

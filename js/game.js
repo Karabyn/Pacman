@@ -27,8 +27,11 @@ const gameStates = {
     GAME_WON  : 5,
     GAME_LOST : 6
 };
-
 let gameState = gameStates.NEW_GAME;
+
+let lastFrameTimestamp = 0; // last loop execution timestamp
+const fps = 60; // number of frames (mainGameLoop) executions per second.
+let tick = 0;
 
 function createGameCanvas() {
     // create canvas element
@@ -60,6 +63,20 @@ function activeGameLoop() {
     drawScore();
     drawLives();
 
+    if (pacman.chasingMode) {
+        // chasing mode lasted 5 seconds
+        if (!AudioPlayer.isPlaying(audioPlayer.chasingSound)) {
+            audioPlayer.chasingSound.play();
+        }
+        if (tick === fps * 5) {
+            pacman.chasingMode = false;
+            tick = 0;
+            audioPlayer.chasingSound.pause();
+        } else {
+            tick++;
+        }
+    }
+
     // pacman next movement
     if (controls.rightPressed && !pacman.currentDir.RIGHT) {
         pacman.nextDir = Pacman.initialDir();
@@ -83,35 +100,57 @@ function activeGameLoop() {
         ghost.move();
     }
 
+    let ghostCollision = false;
+    let collidedGhost;
     drawPacman();
-    for(let ghost of ghosts) {
-        drawGhost(ghost);
+    for (let ghost of ghosts) {
+        if (ghost.alive) {
+            drawGhost(ghost, pacman.chasingMode);
+            if (Collider.pacmanGhostCollision(pacman, ghost)) {
+                ghostCollision = true;
+                collidedGhost = ghost;
+            }
+        }
     }
 
-    if (Collider.pacmanGhostCollision(pacman, ghosts)) {
+    if (ghostCollision && !pacman.chasingMode) {
         audioPlayer.dieSound.play();
         pacman.die();
         for(let ghost of ghosts) {
             ghost.reset();
         }
-        if (pacman.lives < 0) {
+        if (pacman.lives === 0) {
             gameState = gameStates.GAME_LOST;
         }
     }
+    else if (ghostCollision && pacman.chasingMode) {
+        audioPlayer.eatGhostSound.play();
+        Pacman.eatGhost(collidedGhost);
+    }
 }
 
-async function mainGameLoop() {
+async function mainGameLoop(timestamp) {
+
+    // If the expected time has not elapsed, wait for the next frame
+    if (timestamp + 1 < lastFrameTimestamp + (1000 / fps)) {
+        requestAnimationFrame(mainGameLoop);
+        return;
+    }
+    lastFrameTimestamp = timestamp;
+
     switch (gameState) {
         case gameStates.NEW_GAME:
             showNewGameScreen();
             break;
         case gameStates.STARTING:
+            audioPlayer.startGameSound.play();
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             map.drawMap(ctx);
             drawPacman();
             for(let ghost of ghosts) {
                 drawGhost(ghost);
             }
+            await asyncSleep(1200);
             showCountDown(3);
             await asyncSleep(1000);
             showCountDown(2);
@@ -124,15 +163,17 @@ async function mainGameLoop() {
             activeGameLoop();
             break;
         case gameStates.PAUSED:
+            audioPlayer.stopAllSounds();
             showPausedMessage();
             break;
         case gameStates.GAME_WON:
+            audioPlayer.stopAllSounds();
             await asyncSleep(2000);
             showWinScreen();
             break;
         case gameStates.GAME_LOST:
+            audioPlayer.stopAllSounds();
             showGameOverScreen();
-
     }
     requestAnimationFrame(mainGameLoop);
 }

@@ -8,9 +8,10 @@ class Pacman extends MovingAgent {
         this.x = startCoords.x;
         this.y = startCoords.y;
 
-        this.lives = 2;
-
+        this.lives = 3;
         this.color = "yellow";
+
+        this.chasingMode = false;
     }
 
     move() {
@@ -18,6 +19,7 @@ class Pacman extends MovingAgent {
 
         // eat food
         this.eatFood();
+        this.eatCookie();
     }
 
     eatFood() {
@@ -25,6 +27,18 @@ class Pacman extends MovingAgent {
         if (this.map.isTileWithinBounds(currentTile.row, currentTile.col) &&
             this.map.TILES[currentTile.row][currentTile.col] === map.FOOD) {
             score += 10;
+            this.map.TILES[currentTile.row][currentTile.col] = map.EMPTY;
+        }
+    }
+
+    eatCookie() {
+        const currentTile = this.map.getTileRowColumn(this.x, this.y);
+        if (this.map.isTileWithinBounds(currentTile.row, currentTile.col) &&
+            this.map.TILES[currentTile.row][currentTile.col] === map.COOKIE) {
+            audioPlayer.eatCookieSound.play();
+            tick = 0;
+            this.chasingMode = true;
+            score += 50;
             this.map.TILES[currentTile.row][currentTile.col] = map.EMPTY;
         }
     }
@@ -37,6 +51,7 @@ class Pacman extends MovingAgent {
 
     reset() {
         this.lives = 3;
+        this.chasingMode = false;
         this.resetPosition();
     }
 
@@ -49,6 +64,11 @@ class Pacman extends MovingAgent {
 
     getStartingCoodinates() {
         return this.map.getTileCenter(19, 12);
+    }
+
+    static eatGhost(ghost) {
+        score += 100;
+        ghost.die();
     }
 
 }
