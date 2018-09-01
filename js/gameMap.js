@@ -42,7 +42,7 @@ class GameMap {
             }
         }
         if (!this.hasFoodElements) {
-            gameState = gameStates.GAME_WON;
+            game.setGameState(game.gameStates.GAME_WON);
         }
     }
 

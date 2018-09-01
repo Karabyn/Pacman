@@ -23,4 +23,5 @@ class Collider {
 
         return Math.pow(dx, 2) + Math.pow(dy, 2) < Math.pow(dist, 2);
     }
+
 }

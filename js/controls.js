@@ -33,18 +33,18 @@ class Controls {
         else if(e.keyCode === this.downKey) {
             this.downPressed = true;
         }
-        else if((gameState === gameStates.GAME_WON || gameState === gameStates.GAME_LOST) &&
-            e.keyCode === this.restartResumeKey) {
-            startNewGame();
+        else if((game.getGameState() === game.gameStates.GAME_WON || game.getGameState() === game.gameStates.GAME_LOST)
+            && e.keyCode === this.restartResumeKey) {
+            game.startNewGame();
         }
-        else if(gameState === gameStates.NEW_GAME && e.keyCode === this.startKey) {
-            gameState = gameStates.STARTING;
+        else if(game.getGameState() === game.gameStates.NEW_GAME && e.keyCode === this.startKey) {
+            game.setGameState(game.gameStates.STARTING);
         }
-        else if(gameState === gameStates.RUNNING && e.keyCode === this.pauseKey) {
-            gameState = gameStates.PAUSED;
+        else if(game.getGameState() === game.gameStates.RUNNING && e.keyCode === this.pauseKey) {
+            game.setGameState(game.gameStates.PAUSED);
         }
-        else if(gameState === gameStates.PAUSED && e.keyCode === this.restartResumeKey) {
-            gameState = gameStates.RUNNING;
+        else if(game.getGameState() === game.gameStates.PAUSED && e.keyCode === this.restartResumeKey) {
+            game.setGameState(game.gameStates.RUNNING);
         }
     }
 

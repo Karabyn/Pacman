@@ -25,21 +25,21 @@ class Pacman extends MovingAgent {
     eatFood() {
         const currentTile = this.map.getTileRowColumn(this.x, this.y);
         if (this.map.isTileWithinBounds(currentTile.row, currentTile.col) &&
-            this.map.TILES[currentTile.row][currentTile.col] === map.FOOD) {
-            score += 10;
-            this.map.TILES[currentTile.row][currentTile.col] = map.EMPTY;
+            this.map.TILES[currentTile.row][currentTile.col] === this.map.FOOD) {
+            game.incrementScore(10);
+            this.map.TILES[currentTile.row][currentTile.col] = this.map.EMPTY;
         }
     }
 
     eatCookie() {
         const currentTile = this.map.getTileRowColumn(this.x, this.y);
         if (this.map.isTileWithinBounds(currentTile.row, currentTile.col) &&
-            this.map.TILES[currentTile.row][currentTile.col] === map.COOKIE) {
-            audioPlayer.eatCookieSound.play();
-            tick = 0;
+            this.map.TILES[currentTile.row][currentTile.col] === this.map.COOKIE) {
+            game.audioPlayer.eatCookieSound.play();
+            game.setTick(0);
             this.chasingMode = true;
-            score += 50;
-            this.map.TILES[currentTile.row][currentTile.col] = map.EMPTY;
+            game.incrementScore(50);
+            this.map.TILES[currentTile.row][currentTile.col] = this.map.EMPTY;
         }
     }
 
@@ -67,7 +67,7 @@ class Pacman extends MovingAgent {
     }
 
     static eatGhost(ghost) {
-        score += 100;
+        game.incrementScore(100);
         ghost.die();
     }
 

@@ -1,84 +1,99 @@
-function drawPacman() {
-    ctx.beginPath();
-    ctx.arc(pacman.x, pacman.y, pacman.radius, 0, Math.PI * 2, false);
-    ctx.fillStyle = pacman.color;
-    ctx.fill();
-    ctx.closePath();
-}
+class Renderer {
 
-function drawGhost(ghost, chasingMode) {
-    ctx.beginPath();
-    ctx.arc(ghost.x, ghost.y, ghost.radius, 0, Math.PI * 2, false);
-    ctx.fillStyle = chasingMode ? "LightBlue" : ghost.color;
-    ctx.fill();
-    ctx.closePath();
-}
+    constructor(canvas) {
+        this.canvas = canvas;
+        this.ctx = canvas.getContext("2d");
+    }
 
-function drawScore() {
-    ctx.font = "20px Arial";
-    ctx.fillStyle = "white";
-    ctx.fillText("Score: " + score, 10, 525);
-}
+    drawPacman(pacman) {
+        this.ctx.beginPath();
+        this.ctx.arc(pacman.x, pacman.y, pacman.radius, 0, Math.PI * 2, false);
+        this.ctx.fillStyle = pacman.color;
+        this.ctx.fill();
+        this.ctx.closePath();
+    }
 
-function drawLives() {
-    ctx.font = "20px Arial";
-    ctx.fillStyle = "white";
-    ctx.fillText("Lives: " + pacman.lives, 125, 525);
-}
+    drawGhost(ghost, chasingMode) {
+        this.ctx.beginPath();
+        this.ctx.arc(ghost.x, ghost.y, ghost.radius, 0, Math.PI * 2, false);
+        this.ctx.fillStyle = chasingMode ? "LightBlue" : ghost.color;
+        this.ctx.fill();
+        this.ctx.closePath();
+    }
 
-function showGameOverScreen() {
-    ctx.save();
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.textAlign="center";
-    ctx.fillStyle = "yellow";
-    ctx.font = "26px Helvetica";
-    ctx.fillText("GAME OVER!", map.width / 2, map.height / 2);
-    ctx.font = "16px Helvetica";
-    const topMargin = 25;
-    ctx.fillText("Your score: " + score, map.width / 2, map.height / 2 + topMargin);
-    ctx.fillText("Press 'R' to play again", map.width / 2, map.height / 2 + topMargin * 2);
-    ctx.restore();
-}
+    drawScore(score) {
+        this.ctx.font = "20px Arial";
+        this.ctx.fillStyle = "white";
+        this.ctx.fillText("Score: " + score, 10, 525);
+    }
 
-function showWinScreen() {
-    ctx.save();
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.textAlign="center";
-    ctx.fillStyle = "yellow";
-    ctx.font = "26px Helvetica";
-    ctx.fillText("YOU WIN!", map.width / 2, map.height / 2);
-    ctx.font = "16px Helvetica";
-    const topMargin = 25;
-    ctx.fillText("Your score: " + score, map.width / 2, map.height / 2 + topMargin);
-    ctx.fillText("Press 'R' to play again", map.width / 2, map.height / 2 + topMargin * 2);
-    ctx.restore();
-}
+    drawLives(lives) {
+        this.ctx.font = "20px Arial";
+        this.ctx.fillStyle = "white";
+        this.ctx.fillText("Lives: " + lives, 125, 525);
+    }
 
-function showNewGameScreen() {
-    ctx.save();
-    ctx.textAlign="center";
-    ctx.fillStyle = "yellow";
-    ctx.font = "26px Helvetica";
-    ctx.fillText("Press 's' to start a game", map.width / 2, map.height / 2);
-    ctx.restore();
-}
+    showGameOverScreen(score) {
+        this.ctx.save();
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.textAlign="center";
+        this.ctx.fillStyle = "yellow";
+        this.ctx.font = "26px Helvetica";
+        const gameWidth = this.canvas.width;
+        const gameHeight = this.canvas.height - 30;
+        this.ctx.fillText("GAME OVER!", gameWidth / 2, gameHeight / 2);
+        this.ctx.font = "16px Helvetica";
+        const topMargin = 25;
+        this.ctx.fillText("Your score: " + score, gameWidth / 2, gameHeight / 2 + topMargin);
+        this.ctx.fillText("Press 'R' to play again", gameWidth / 2, gameHeight / 2 + topMargin * 2);
+        this.ctx.restore();
+    }
 
-function showCountDown(n) {
-    ctx.save();
-    ctx.clearRect(0, canvasHeight - 30, canvasWidth, canvasHeight);
-    ctx.textAlign = "center";
-    ctx.fillStyle = "yellow";
-    ctx.font = "20px Helvetica";
-    ctx.fillText("Game starts in " + n, canvasWidth / 2, canvasHeight - 5);
-    ctx.restore();
-}
+    showWinScreen(score) {
+        this.ctx.save();
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.textAlign="center";
+        this.ctx.fillStyle = "yellow";
+        this.ctx.font = "26px Helvetica";
+        const gameWidth = this.canvas.width;
+        const gameHeight = this.canvas.height - 30;
+        this.ctx.fillText("YOU WIN!", gameWidth / 2, map.height / 2);
+        this.ctx.font = "16px Helvetica";
+        const topMargin = 25;
+        this.ctx.fillText("Your score: " + score, gameWidth / 2, gameHeight / 2 + topMargin);
+        this.ctx.fillText("Press 'R' to play again", gameWidth / 2, gameHeight / 2 + topMargin * 2);
+        this.ctx.restore();
+    }
 
-function showPausedMessage() {
-    ctx.save();
-    ctx.clearRect(0, canvasHeight - 30, canvasWidth, canvasHeight);
-    ctx.textAlign = "center";
-    ctx.fillStyle = "yellow";
-    ctx.font = "20px Helvetica";
-    ctx.fillText("Press 'r' to resume", canvasWidth / 2, canvasHeight - 5);
-    ctx.restore();
+    showNewGameScreen() {
+        this.ctx.save();
+        this.ctx.textAlign="center";
+        this.ctx.fillStyle = "yellow";
+        this.ctx.font = "26px Helvetica";
+        const gameWidth = this.canvas.width;
+        const gameHeight = this.canvas.height - 30;
+        this.ctx.fillText("Press 's' to start a game", gameWidth / 2, gameHeight / 2);
+        this.ctx.restore();
+    }
+
+    showCountDown(n) {
+        this.ctx.save();
+        this.ctx.clearRect(0, this.canvas.height - 30, this.canvas.width, this.canvas.height);
+        this.ctx.textAlign = "center";
+        this.ctx.fillStyle = "yellow";
+        this.ctx.font = "20px Helvetica";
+        this.ctx.fillText("Game starts in " + n, this.canvas.width / 2, this.canvas.height - 5);
+        this.ctx.restore();
+    }
+
+    showPausedMessage() {
+        this.ctx.save();
+        this.ctx.clearRect(0, this.canvas.height - 30, this.canvas.width, this.canvas.height);
+        this.ctx.textAlign = "center";
+        this.ctx.fillStyle = "yellow";
+        this.ctx.font = "20px Helvetica";
+        this.ctx.fillText("Press 'r' to resume", this.canvas.width / 2, this.canvas.height - 5);
+        this.ctx.restore();
+    }
+
 }

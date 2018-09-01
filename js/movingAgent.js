@@ -112,14 +112,16 @@ class MovingAgent {
     teleportRightToLeft() {
         this.currentDir = MovingAgent.initialDir();
         this.currentDir.RIGHT = true;
-        const destinationTile = this.map.getTileCoordinates(map.leftTeleportTile.row, map.leftTeleportTile.col);
+        const destinationTile = this.map.getTileCoordinates(this.map.leftTeleportTile.row,
+                                                            this.map.leftTeleportTile.col);
         this.x = destinationTile.x - this.fullRadius;
     }
 
     teleportLeftToRight() {
         this.currentDir = MovingAgent.initialDir();
         this.currentDir.LEFT = true;
-        const destinationTile = this.map.getTileCoordinates(map.rightTeleportTile.row, map.rightTeleportTile.col);
+        const destinationTile = this.map.getTileCoordinates(this.map.rightTeleportTile.row,
+                                                            this.map.rightTeleportTile.col);
         this.x = destinationTile.x + this.fullRadius;
     }
 
@@ -149,6 +151,42 @@ class MovingAgent {
             RIGHT: false,
             DOWN: false,
             LEFT: false
+        };
+    }
+
+    static getDirUp() {
+        return {
+            UP: true,
+            RIGHT: false,
+            DOWN: false,
+            LEFT: false
+        };
+    }
+
+    static getDirRight() {
+        return {
+            UP: false,
+            RIGHT: true,
+            DOWN: false,
+            LEFT: false
+        };
+    }
+
+    static getDirDown() {
+        return {
+            UP: false,
+            RIGHT: false,
+            DOWN: true,
+            LEFT: false
+        };
+    }
+
+    static getDirLeft() {
+        return {
+            UP: false,
+            RIGHT: false,
+            DOWN: false,
+            LEFT: true
         };
     }
 
