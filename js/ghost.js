@@ -17,7 +17,13 @@ class Ghost extends MovingAgent {
 
     move() {
         if (this.alive) {
-            this.nextDir = game.pacman.chasingMode ? this.randomDir() : this.chasePacmanDir();
+            if(this.name === "pinky" || this.name === "clyde") {
+                this.nextDir = game.pacman.chasingMode ? this.randomDir() : this.chasePacmanDir();
+            }
+            else {
+                this.nextDir = this.randomDir();
+            }
+
             super.move();
         }
         else if (!this.alive && this.deadPeriodElapsed()) {
