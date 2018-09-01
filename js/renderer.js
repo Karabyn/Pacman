@@ -57,7 +57,7 @@ class Renderer {
         this.ctx.font = "26px Helvetica";
         const gameWidth = this.canvas.width;
         const gameHeight = this.canvas.height - 30;
-        this.ctx.fillText("YOU WIN!", gameWidth / 2, map.height / 2);
+        this.ctx.fillText("YOU WIN!", gameWidth / 2, gameHeight / 2);
         this.ctx.font = "16px Helvetica";
         const topMargin = 25;
         this.ctx.fillText("Your score: " + score, gameWidth / 2, gameHeight / 2 + topMargin);
