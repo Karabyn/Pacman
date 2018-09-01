@@ -13,6 +13,7 @@ class GameMap {
         this.BLOCK = 2;
         this.FOOD = 3;
         this.COOKIE = 4;
+        this.DOOR = 5;
 
         //25 x 25
         this.TILES = GameMap.getTiles();
@@ -113,7 +114,7 @@ class GameMap {
     canTileBeVisited(row, col) {
         if (this.isTileWithinBounds(row, col)) {
             const tile = this.TILES[row][col];
-            return tile !== this.WALL && tile !== this.BLOCK;
+            return tile !== this.WALL && tile !== this.BLOCK && tile !== this.DOOR;
         }
         return false;
     }
@@ -139,7 +140,7 @@ class GameMap {
                 [1, 1, 1, 1, 1, 3, 2, 3, 3, 3, 3, 3, 2, 3, 3, 3, 3, 3, 2, 3, 1, 1, 1, 1, 1],
                 [0, 0, 0, 0, 1, 3, 2, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 2, 3, 1, 0, 0, 0, 0],
                 [0, 0, 0, 0, 1, 3, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 3, 1, 0, 0, 0, 0],
-                [1, 1, 1, 1, 1, 3, 2, 0, 2, 2, 2, 0, 0, 0, 2, 2, 2, 0, 2, 3, 1, 1, 1, 1, 1],
+                [1, 1, 1, 1, 1, 3, 2, 0, 2, 2, 2, 5, 5, 5, 2, 2, 2, 0, 2, 3, 1, 1, 1, 1, 1],
                 [0, 0, 0, 0, 0, 3, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 3, 0, 0, 0, 0, 0],
                 [1, 1, 1, 1, 1, 3, 2, 0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 2, 3, 1, 1, 1, 1, 1],
                 [0, 0, 0, 0, 1, 3, 2, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 2, 3, 1, 0, 0, 0, 0],
