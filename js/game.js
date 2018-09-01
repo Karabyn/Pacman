@@ -1,187 +1,218 @@
-// create canvas element
-var canvas = document.createElement("canvas");
-// define size
-canvasWidth = 620;
-canvasHeight = 620;
-// set attributes for canvas
-canvas.setAttribute("width", canvasWidth);
-canvas.setAttribute("height", canvasHeight);
-// add canvas element inside the body
-document.getElementsByTagName("body")[0].appendChild(canvas);
+game = function() {
 
-// store the 2D rendering context
-var ctx = canvas.getContext("2d");
+    const canvasWidth = 500;
+    const canvasHeight = 530;
+    const canvas = createGameCanvas();
+    // store the 2D rendering context
+    const ctx = canvas.getContext("2d");
+    // Renderer
+    const renderer = new Renderer(canvas);
+    // Game map
+    const map = new GameMap();
+    // Moving agents
+    const pacman = new Pacman(map);
+    const blinky = new Ghost(map, "blinky");
+    const pinky = new Ghost(map, "pinky");
+    const inky = new Ghost(map, "inky");
+    const clyde = new Ghost(map, "clyde");
+    const ghosts = [blinky, pinky, inky, clyde];
+    // Game score
+    let score = 0;
+    // Music
+    const audioPlayer = new AudioPlayer();
+    // Game controls
+    const controls = new Controls();
 
-pacmanRadius = 20;
-// define pacman starting coordinates
-var x = canvasWidth/2;
-var y = canvasHeight - pacmanRadius;
-// numerical coordinate values for pacman movement on x and y axis
-var dx = 2;
-var dy = 2;
+    const gameStates = {
+        NEW_GAME  : 1,
+        STARTING  : 2,
+        RUNNING   : 3,
+        PAUSED    : 4,
+        GAME_WON  : 5,
+        GAME_LOST : 6
+    };
+    let gameState = gameStates.NEW_GAME;
 
-// food definitions
-var foodRowCount = 14;
-var foodColumnCount = 14;
-var foodRadius = 4;
-var foodPadding = 35;
-var foodOffsetTop = 50;
-var foodOffsetLeft = 50;
+    let lastFrameTimestamp = 0; // last loop execution timestamp
+    const fps = 60; // number of frames (mainGameLoop) executions per second.
+    let tick = 0;
 
-// generate food elements
-var foodElements = [];
-for(c=0; c<foodColumnCount; c++) {
-    foodElements[c] = [];
-    for(r=0; r<foodRowCount; r++) {
-        foodElements[c][r] = { x: 0, y: 0, status: 1 };
+    function getGameState() {
+        return gameState;
     }
-}
 
-var score = 0;
-
-// Music
-var backgroundMusic = new sound("music/backgroundSong.mp3");
-
-// GAME CONTROLS
-
-// declare keys
-var leftPressed = false;
-var upPressed = false;
-var rightPressed = false;
-var downPressed = false;
-
-// key codes
-var leftKey = 37;
-var upKey = 38;
-var rightKey = 39;
-var downKey = 40;
-
-// add event listeners for arrow keys
-document.addEventListener("keydown", keyDownHandler, false);
-document.addEventListener("keyup", keyUpHandler, false);
-
-function keyDownHandler(e) {
-    if(e.keyCode == leftKey) {
-        leftPressed = true;
+    function setGameState(state) {
+        gameState = state;
     }
-    else if(e.keyCode == upKey) {
-        upPressed = true;
-    }
-    else if(e.keyCode == rightKey) {
-        rightPressed = true;
-    }
-    else if(e.keyCode == downKey) {
-        downPressed = true;
-    }
-}
 
-function keyUpHandler(e) {
-    if(e.keyCode == leftKey) {
-        leftPressed = false;
+    function setTick(value) {
+        tick = value;
     }
-    else if(e.keyCode == upKey) {
-        upPressed = false;
-    }
-    else if(e.keyCode == rightKey) {
-        rightPressed = false;
-    }
-    else if(e.keyCode == downKey) {
-        downPressed = false;
-    }
-}
 
-// detect collision between pacman and food elements
-function collisionDetection() {
-    for(c=0; c<foodColumnCount; c++) {
-        for(r=0; r<foodRowCount; r++) {
-            var foodElement = foodElements[c][r];
-            if(foodElement.status == 1) {
-                //check if the food element is fully inside the pacman circumference
-                if(x + pacmanRadius > foodElement.x + foodRadius && x - pacmanRadius < foodElement.x + foodRadius  &&
-                    y + pacmanRadius > foodElement.y + foodRadius && y - pacmanRadius < foodElement.y + foodRadius) {
-                    foodElement.status = 0;
-                    var eatingSound = new sound("music/eating.mp3");
-                    eatingSound.play();
-                    score += 10;
+    function incrementScore(n) {
+        score += n;
+    }
+
+    function createGameCanvas() {
+        // create canvas element
+        const canvas = document.createElement("canvas");
+        // set attributes for canvas
+        canvas.setAttribute("width", canvasWidth);
+        canvas.setAttribute("height", canvasHeight);
+        // add canvas element inside the body
+        document.getElementsByTagName("body")[0].appendChild(canvas);
+        return canvas;
+    }
+
+    function startNewGame() {
+        gameState = gameStates.STARTING;
+        score = 0;
+        map.reset();
+        pacman.reset();
+        for (let ghost of ghosts) {
+            ghost.reset();
+        }
+    }
+
+    function activeGameLoop() {
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        map.drawMap(ctx);
+
+        renderer.drawScore(score);
+        renderer.drawLives(pacman.lives);
+
+        if (pacman.chasingMode) {
+            // chasing mode lasted 5 seconds
+            if (!AudioPlayer.isPlaying(audioPlayer.chasingSound)) {
+                audioPlayer.chasingSound.play();
+            }
+            if (tick === fps * 5) {
+                pacman.chasingMode = false;
+                tick = 0;
+                audioPlayer.chasingSound.pause();
+            } else {
+                tick++;
+            }
+        }
+
+        // pacman next movement
+        if (controls.rightPressed && !pacman.currentDir.RIGHT) {
+            pacman.nextDir = Pacman.initialDir();
+            pacman.nextDir.RIGHT = true;
+        }
+        else if (controls.leftPressed && !pacman.currentDir.LEFT) {
+            pacman.nextDir = Pacman.initialDir();
+            pacman.nextDir.LEFT = true;
+        }
+        else if (controls.upPressed && !pacman.currentDir.UP) {
+            pacman.nextDir = Pacman.initialDir();
+            pacman.nextDir.UP = true;
+        }
+        else if (controls.downPressed && !pacman.currentDir.DOWN) {
+            pacman.nextDir = Pacman.initialDir();
+            pacman.nextDir.DOWN = true;
+        }
+
+        pacman.move();
+        for(let ghost of ghosts) {
+            ghost.move();
+        }
+
+        let ghostCollision = false;
+        let collidedGhost;
+        renderer.drawPacman(pacman);
+        for (let ghost of ghosts) {
+            if (ghost.alive) {
+                renderer.drawGhost(ghost, pacman.chasingMode);
+                if (Collider.pacmanGhostCollision(pacman, ghost)) {
+                    ghostCollision = true;
+                    collidedGhost = ghost;
                 }
             }
         }
-    }
-}
 
-function drawPacman() {
-    ctx.beginPath();
-    // bottom middle
-    ctx.arc(x, y, pacmanRadius, 0, Math.PI * 2, false);
-    ctx.fillStyle = "yellow";
-    ctx.fill();
-    ctx.closePath();
-}
-
-function drawFood() {
-    for(c=0; c<foodColumnCount; c++) {
-        for(r=0; r<foodRowCount; r++) {
-            if(foodElements[c][r].status == 1) {
-                var foodX = (c*(foodRadius+foodPadding))+foodOffsetLeft;
-                var foodY = (r*(foodRadius+foodPadding))+foodOffsetTop;
-                foodElements[c][r].x = foodX;
-                foodElements[c][r].y = foodY;
-                ctx.beginPath();
-                ctx.arc(foodX, foodY, foodRadius, 0, Math.PI * 2, false);
-                ctx.fillStyle = "orange";
-                ctx.fill();
-                ctx.closePath();
+        if (ghostCollision && !pacman.chasingMode) {
+            audioPlayer.dieSound.play();
+            pacman.die();
+            for(let ghost of ghosts) {
+                ghost.reset();
+            }
+            if (pacman.lives === 0) {
+                gameState = gameStates.GAME_LOST;
             }
         }
-    }
-}
-
-function drawScore() {
-    ctx.font = "18px Arial";
-    ctx.fillStyle = "white";
-    ctx.fillText("Score: "+ score, 8, 20);
-}
-
-function sound(src) {
-    this.sound = document.createElement("audio");
-    this.sound.src = src;
-    this.sound.setAttribute("preload", "auto");
-    this.sound.setAttribute("controls", "none");
-    this.sound.style.display = "none";
-    document.body.appendChild(this.sound);
-    this.play = function(){
-        this.sound.play();
-    }
-    this.stop = function(){
-        this.sound.pause();
-    }
-}
-
-function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    drawPacman();
-    drawFood();
-    drawScore();
-
-    collisionDetection();
-
-    // movement
-    if(rightPressed) {
-        x += dx;
-    }
-    else if(leftPressed) {
-        x -= dx;
-    }
-    else if(upPressed) {
-        y -= dy;
-    }
-    else if(downPressed) {
-        y += dy;
+        else if (ghostCollision && pacman.chasingMode) {
+            audioPlayer.eatGhostSound.play();
+            Pacman.eatGhost(collidedGhost);
+        }
     }
 
-    requestAnimationFrame(draw);
-}
+    async function mainGameLoop(timestamp) {
 
-backgroundMusic.play();
-draw();
+        // If the expected time has not elapsed, wait for the next frame
+        if (timestamp + 1 < lastFrameTimestamp + (1000 / fps)) {
+            requestAnimationFrame(mainGameLoop);
+            return;
+        }
+        lastFrameTimestamp = timestamp;
+
+        switch (gameState) {
+            case gameStates.NEW_GAME:
+                renderer.showNewGameScreen();
+                break;
+            case gameStates.STARTING:
+                audioPlayer.startGameSound.play();
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                map.drawMap(ctx);
+                renderer.drawPacman(pacman);
+                for(let ghost of ghosts) {
+                    renderer.drawGhost(ghost, pacman.chasingMode);
+                }
+                await asyncSleep(1200);
+                renderer.showCountDown(3);
+                await asyncSleep(1000);
+                renderer.showCountDown(2);
+                await asyncSleep(1000);
+                renderer.showCountDown(1);
+                await asyncSleep(1000);
+                gameState = gameStates.RUNNING;
+                break;
+            case gameStates.RUNNING:
+                activeGameLoop();
+                break;
+            case gameStates.PAUSED:
+                audioPlayer.stopAllSounds();
+                renderer.showPausedMessage();
+                break;
+            case gameStates.GAME_WON:
+                audioPlayer.stopAllSounds();
+                await asyncSleep(2000);
+                renderer.showWinScreen(score);
+                break;
+            case gameStates.GAME_LOST:
+                audioPlayer.stopAllSounds();
+                renderer.showGameOverScreen(score);
+        }
+        requestAnimationFrame(mainGameLoop);
+    }
+
+    return {
+        map : map,
+        pacman : pacman,
+        audioPlayer : audioPlayer,
+        gameStates : gameStates,
+        fps : fps,
+
+        getGameState : getGameState,
+        setGameState : setGameState,
+        setTick : setTick,
+        incrementScore : incrementScore,
+        startNewGame : startNewGame,
+        mainGameLoop : mainGameLoop
+    }
+    
+}();
+
+game.mainGameLoop();
