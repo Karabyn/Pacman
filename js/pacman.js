@@ -4,7 +4,7 @@ class Pacman extends MovingAgent {
         super(map);
 
         // pacman starting coordinates
-        const startCoords = this.getStartingCoodinates();
+        const startCoords = this.getStartingCoordinates();
         this.x = startCoords.x;
         this.y = startCoords.y;
 
@@ -56,13 +56,13 @@ class Pacman extends MovingAgent {
     }
 
     resetPosition() {
-        const startCoords = this.getStartingCoodinates();
+        const startCoords = this.getStartingCoordinates();
         this.x = startCoords.x;
         this.y = startCoords.y;
         this.resetDirs();
     }
 
-    getStartingCoodinates() {
+    getStartingCoordinates() {
         return this.map.getTileCenter(19, 12);
     }
 
